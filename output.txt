@@ -1,0 +1,44 @@
+===================== Model =====================
+
+Priors:
+-------------------------------------------
+Prior for virus: 0.343
+Prior for not virus: 0.657
+
+
+Likelihoods:
+-------------------------------------------
+
+Female given virus: 0.6763848396501457
+Female given not virus: 0.3622526636225266
+
+Male given virus: 0.32361516034985427
+Male given not virus: 0.6377473363774734
+
+Postive blood type given virus: 0.9358600583090378
+Postive blood type given not virus: 0.8691019786910198
+
+Negative blood type given virus: 0.06413994169096215
+Negative blood type given not virus: 0.1308980213089802
+
+Weight > 170lbs. given virus: 0.6443148688046647
+Weight > 170lbs. given not virus: 0.547945205479452
+
+Weight <= 170lbs. given virus: 0.3556851311953353
+Weight <= 170lbs. given not virus: 0.452054794520548
+
+-------------------------------------------
+
+
+
+================ Confusion Matrix ================
+
+== Confusion Matrix ==
+
+	yes 	no
+____|__________________
+    |
+yes |   116	4
+    |
+no  |   3	137
+_______________________
