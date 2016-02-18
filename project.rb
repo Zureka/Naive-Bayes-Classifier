@@ -1,11 +1,13 @@
 require './patient'
 require './model'
 require './prediction'
+require 'descriptive_statistics'
 
 # Create the global arrays and models that store the information
 @test_patients = Array.new
 @training_patients = Array.new
 @predictions = Array.new
+@patient_weights = Array.new
 @model = Model.new
 
 # Print the contents of the chosen array to the console window in a 
@@ -223,6 +225,7 @@ def build_model
 					get_likelihood_weight('Y'),get_likelihood_weight('N'))
 end
 
+# Creates the confusion matrix
 def confusion_matrix
 	actual_no = 0
 	predicted_no = 0
@@ -248,9 +251,9 @@ def confusion_matrix
 	yes 	no
 ____|__________________
     |
-yes |   #{actual_yes - (actual_yes - predicted_yes)}\t#{actual_no - predicted_no}
+yes |   #{actual_yes - (actual_yes - predicted_yes)}\t#{actual_yes - predicted_yes}
     |
-no  |   #{actual_yes - predicted_yes}\t#{actual_no - (actual_no - predicted_no)}
+no  |   #{actual_no - predicted_no}\t#{actual_no - (actual_no - predicted_no)}
 _______________________
 """
 end
@@ -290,6 +293,37 @@ Weight <= 170lbs. given not virus: #{@model.small_weight_not_virus}
 	"""
 end
 
+# Generates statistical information regarding Patient weight for both 
+# populations (virus == y && virus == n)
+def weight_info 
+	weight_info_virus = Array.new
+	weight_info_no_virus = Array.new
+	count = 0
+	@training_patients.each do |p|
+		if p.infected == "Y"
+			weight_info_virus.push(@patient_weights[count])
+		else
+			weight_info_no_virus.push(@patient_weights[count])
+		end
+		count += 1
+	end
+	puts """
+Patient Weight Info Given Virus:
+-----------------------------------
+Sum of Patient Weight:\t\t\t#{weight_info_virus.sum}
+Mean of Patient Weight:\t\t\t#{weight_info_virus.mean}
+Variance of Patient Weight:\t\t#{weight_info_virus.variance}
+Standard Deviation of Patient Weight:\t#{weight_info_virus.standard_deviation}
+
+Patient Weight Info Given Not Virus:
+-----------------------------------
+Sum of Patient Weight:\t\t\t#{weight_info_no_virus.sum}
+Mean of Patient Weight:\t\t\t#{weight_info_no_virus.mean}
+Variance of Patient Weight:\t\t#{weight_info_no_virus.variance}
+Standard Deviation of Patient Weight:\t#{weight_info_no_virus.standard_deviation}
+	"""
+end
+
 # Open the files and read their contents into the string variables.
 test_data = ''
 training_data = ''
@@ -311,6 +345,7 @@ training_lines.each do |line|
 			edit_blood_type(pat[2].to_s),
 			edit_weight(pat[3].to_i),
 			pat[4])
+	@patient_weights.push(pat[3].to_i)
 	@training_patients.push(p)
 end
 
@@ -333,7 +368,7 @@ build_predictions()
 
 # Menu options that loop back to let you choose another option
 loop do
-	puts "\nWhat would you like to do?\n\t- build model?\n\t- print?\n\t- predictions?"
+	puts "\nWhat would you like to do?\n\t- build model?\n\t- print?\n\t- predictions?\n\t- weights?"
 	choice = $stdin.gets.chomp
 	if choice.downcase == "build model"
 		print_model()
@@ -341,6 +376,8 @@ loop do
 		print()
 	elsif choice.downcase == "predictions"
 		print_predicitons()
+	elsif choice.downcase == "weights"
+		weight_info()
 	else
 		puts "Invalid input, exiting now..."
 	end
